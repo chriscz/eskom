@@ -46,4 +46,4 @@ def main(poll_seconds):
 		win.update()
 		time.sleep(poll_seconds)
 if __name__ == "__main__":
-	main(2)
+	main(30)
