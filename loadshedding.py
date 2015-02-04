@@ -27,13 +27,15 @@ def read_status():
 		content = urllib.urlopen(url).read(-1)
 		status = int(content)
 		if status == 1:
-			return string.format('None')
+			return 'No loadshedding'
 		elif status == 2:
 			return string.format(1)
 		elif status == 3:
 			return string.format(2)
 		elif status == 4:
 			return string.format(3)
+		else:
+			return 'Unknown loadshedding stage'
 	except Exception as e:
 		print e
 		return "Connection error occured"
