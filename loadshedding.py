@@ -1,51 +1,53 @@
-from Tkinter import Tk, Label, StringVar
-import subprocess
-from multiprocessing import Pool, Process
-import time
-from lxml import etree
-import re
+from Tkinter import Tk, Label
+import urllib
 
 def create_label_window():
-	"""
-		Creates a label displaying window.
-		returns (root_window, tinker StringVar).
-	"""
-	root = Tk()
-	data_var = StringVar("")
-	
-	label = Label(root, textvariable=data_var, fg='red', font=('Arial', 32))
-	label.pack()
-	
-	return  root, data_var
+    """
+        Creates a label displaying window.
+        returns (root_window, tinker StringVar).
+    """
+    root = Tk()
+    root.minsize(width=300, height=50)
+    root.maxsize(width=300, height=50)
+    label = Label(root, text='Waiting...', fg='red', font=('Arial', 24))
+    label.pack()
+    return root, label
 
 def read_status():
-	string = "Stage: {}"
-	try:
-		import urllib
-		from lxml.html import fromstring
-		url = 'http://loadshedding.eskom.co.za/LoadShedding/GetStatus'
-		content = urllib.urlopen(url).read(-1)
-		status = int(content)
-		if status == 1:
-			return 'No loadshedding'
-		elif status == 2:
-			return string.format(1)
-		elif status == 3:
-			return string.format(2)
-		elif status == 4:
-			return string.format(3)
-		else:
-			return 'Unknown loadshedding stage'
-	except Exception as e:
-		print e
-		return "Connection error occured"
+    string = "Stage: {}"
+    try:
+
+        url = 'http://loadshedding.eskom.co.za/LoadShedding/GetStatus'
+        content = urllib.urlopen(url).read(-1)
+        status = int(content)
+        if status == 1:
+            return 'No loadshedding'
+        elif status == 2:
+            return string.format(1)
+        elif status == 3:
+            return string.format(2)
+        elif status == 4:
+            return string.format(3)
+        else:
+            return 'Unknown loadshedding stage'
+    except Exception as e:
+        print e
+        return "Connection error occured"
 
 def main(poll_seconds):
-	win, msg = create_label_window()
-	while True:
-		status = read_status()
-		msg.set(status)
-		win.update()
-		time.sleep(poll_seconds)
+    win, label = create_label_window()
+    def refresher():
+        status = read_status()
+        old_text = label['text']
+        label.configure(text=status)
+        label.pack()
+        if old_text != status:
+            win.deiconify()
+            win.lift()
+            win.wm_attributes("-topmost", 1)
+        win.after(poll_seconds*1000, refresher)
+    win.after(0, refresher)
+    win.mainloop()
 if __name__ == "__main__":
-	main(30)
+    # Update every minute
+    main(60)
