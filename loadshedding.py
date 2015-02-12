@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 from Tkinter import Tk, Label
 import urllib
 
