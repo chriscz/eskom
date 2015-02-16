@@ -5,7 +5,7 @@ import urllib
 def create_label_window():
     """
         Creates a label displaying window.
-        returns (root_window, tinker StringVar).
+        returns (root_window, label).
     """
     root = Tk()
     root.minsize(width=300, height=50)
@@ -30,7 +30,7 @@ def read_status():
         elif status == 4:
             return string.format(3)
         else:
-            return 'Unknown loadshedding stage'
+            return string.format('Unknown')
     except Exception as e:
         print e
         return "Connection error occured"
@@ -48,6 +48,9 @@ def main(poll_seconds):
             win.wm_attributes("-topmost", 1)
         win.after(poll_seconds*1000, refresher)
     win.after(0, refresher)
+    # Topmost wiondows states should be applied
+    # consistently throughout
+    win.wm_attributes("-topmost", 1)
     win.mainloop()
 if __name__ == "__main__":
     # Update every minute
